@@ -8,8 +8,8 @@
 pragma solidity ^0.8.0;
 
 contract mappingsAssignment{
-    mapping(address => uint) public addressToInt;
-    mapping(address => bytes32) public addressToHash;
+    mapping(address => uint) addressToInt;
+    mapping(address => bytes32) addressToHash;
     
     function first() public returns(bool){
         addressToInt[msg.sender]++;
