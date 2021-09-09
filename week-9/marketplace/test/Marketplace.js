@@ -1,9 +1,9 @@
-const { expect } = require("chai");
+const { expect, assert } = require("chai");
 const { ethers } = require("hardhat");
 
 describe("Marketplace", function () {
 
- let Marketplace, marketplace, owner, addr1, addr2;
+ let Marketplace, marketplace, owner, addr1, addr2,register, name, storeName, sellerID, sellerAddress;
     //This will be run before each test
     beforeEach(async () => {
         // ethers.getContractFactory is not available in ordinary ethers library only available in hardhat 
@@ -20,19 +20,54 @@ describe("Marketplace", function () {
     describe('Deployment', () => {
         it('Should set the right owner', async () => {
             expect(await marketplace.owner()).to.equal(owner.address)
+            console.log(owner.address);
         });
 
-        // it('should assgin the total supply to the owner', async () => {
-        //     const ownerBalance = await token.balanceOf(owner.address);
-        //     expect(await token.totalSupply()).to.equal(ownerBalance);
-        // });
+       
     });
 
-    describe('Register Seller', () => {
+    describe('Seller', () => {
+        let register, name, storeName, sellerID, sellerAddress,sellerResponse;
+
         it('should register new seller', async () => {
-            expect(await marketplace.connect(addr1).registerSeller("John", "Jonnie Store")).to.equal(true);
+            register = await marketplace.connect(addr1).registerSeller("John", "Jonnie Store");
+            [name, storeName, sellerID, sellerAddress] = (await register.wait()).events[0].args[0];
+
+            expect((name, storeName, sellerID, sellerAddress)).to.equal(("John", "Jonnie Store", 1, "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"));
+
+            console.log("Seller address" ,sellerAddress);
+
         });
-    })
+
+       
+    
+        it('should return details of seller', async () => {
+
+            sellerResponse = await marketplace.getSeller(addr1.address);
+            console.log("seller response", await sellerResponse);
+           
+            expect((name, storeName, sellerID, sellerAddress)).to.equal(("John", "Jonnie Store", 1, "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"));
+            console.log(sellerResponse);
+
+            // expect(await marketplace.getSeller(addr2.address)).to.revertedWith("Not a seller");
+        });
+
+        
+    });
+
+    
+
+    describe('Product', () => {
+        let product;
+
+        it('should add product', async () => {
+            product = await marketplace.connect(addr1).addProduct("Apple", "this is an apple", 100);
+
+            console.log(product);
+        });
+
+        
+    });
     
   
 });
