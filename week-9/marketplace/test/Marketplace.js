@@ -27,7 +27,7 @@ describe("Marketplace", function () {
     });
 
     describe('Seller', () => {
-        let register, name, storeName, sellerID, sellerAddress,sellerResponse;
+        let register, name, storeName, sellerID, sellerAddress;
 
         it('should register new seller', async () => {
             register = await marketplace.connect(addr1).registerSeller("John", "Jonnie Store");
@@ -43,14 +43,19 @@ describe("Marketplace", function () {
     
         it('should return details of seller', async () => {
 
-            sellerResponse = await marketplace.getSeller(addr1.address);
+            const sellerResponse = await marketplace.getSeller(addr1.address);
             console.log("seller response", await sellerResponse);
            
             expect((name, storeName, sellerID, sellerAddress)).to.equal(("John", "Jonnie Store", 1, "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"));
             console.log(sellerResponse);
 
-            // expect(await marketplace.getSeller(addr2.address)).to.revertedWith("Not a seller");
+            
         });
+
+         it("Should revert", async () => {
+            await expect(marketplace.connect(addr1).addProduct("Apple", "this is an apple", 100)).to.be.revertedWith("You cannot add product");
+        });
+
 
         
     });
@@ -60,11 +65,15 @@ describe("Marketplace", function () {
     describe('Product', () => {
         let product;
 
-        it('should add product', async () => {
-            product = await marketplace.connect(addr1).addProduct("Apple", "this is an apple", 100);
+        // it('should add product', async () => {
+        //     product = await marketplace.connect(addr1).addProduct("Apple", "this is an apple", 100);
 
-            console.log(product);
-        });
+        //     console.log(product);
+        // });
+
+        // it("Should revert", async () => {
+        //     await expect(marketplace.connect(addr2).addProduct("Apple", "this is an apple", 100)).to.be.revertedWith("You cannot add product");
+        // });
 
         
     });
